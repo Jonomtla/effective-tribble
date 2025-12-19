@@ -15,9 +15,11 @@
     }
 
     :root {
-      --primary: #6366f1;
-      --primary-dark: #4f46e5;
-      --primary-light: #818cf8;
+      --primary: #10b981;
+      --primary-dark: #059669;
+      --primary-light: #34d399;
+      --accent: #6366f1;
+      --accent-dark: #4f46e5;
       --success: #10b981;
       --warning: #f59e0b;
       --danger: #ef4444;
@@ -31,18 +33,20 @@
       --gray-700: #374151;
       --gray-800: #1f2937;
       --gray-900: #111827;
+      --mint-bg: #f0fdf4;
+      --mint-light: #ecfdf5;
     }
 
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: var(--gray-100);
       min-height: 100vh;
       color: var(--gray-800);
       line-height: 1.6;
     }
 
     .container {
-      max-width: 900px;
+      max-width: 960px;
       margin: 0 auto;
       padding: 40px 20px;
     }
@@ -50,29 +54,28 @@
     /* Header */
     .header {
       text-align: center;
-      margin-bottom: 40px;
+      margin-bottom: 32px;
     }
 
     .logo {
-      font-size: 14px;
-      font-weight: 600;
-      color: rgba(255,255,255,0.9);
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      margin-bottom: 20px;
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--gray-900);
+      letter-spacing: -0.5px;
+      margin-bottom: 8px;
     }
 
     .header h1 {
-      font-size: 48px;
-      font-weight: 800;
-      color: white;
-      margin-bottom: 16px;
-      line-height: 1.1;
+      font-size: 42px;
+      font-weight: 700;
+      color: var(--gray-800);
+      margin-bottom: 12px;
+      line-height: 1.2;
     }
 
     .header p {
-      font-size: 20px;
-      color: rgba(255,255,255,0.9);
+      font-size: 18px;
+      color: var(--gray-500);
       max-width: 600px;
       margin: 0 auto;
     }
@@ -80,53 +83,101 @@
     /* Main Card */
     .card {
       background: white;
-      border-radius: 24px;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      border-radius: 16px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
       overflow: hidden;
     }
 
     .card-body {
-      padding: 40px;
+      padding: 32px;
     }
 
     /* Input Section */
-    .input-section {
+    .input-card {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      padding: 32px;
+      margin-bottom: 24px;
+    }
+
+    .input-header {
       display: flex;
+      align-items: center;
       gap: 12px;
       margin-bottom: 20px;
     }
 
+    .input-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--mint-bg);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .input-icon svg {
+      width: 20px;
+      height: 20px;
+      color: var(--primary);
+    }
+
+    .input-header h2 {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--gray-800);
+    }
+
+    .input-section {
+      display: flex;
+      gap: 12px;
+    }
+
     .url-input {
       flex: 1;
-      padding: 16px 20px;
-      font-size: 18px;
-      border: 2px solid var(--gray-200);
-      border-radius: 12px;
+      padding: 14px 18px;
+      font-size: 16px;
+      font-family: inherit;
+      border: 1px solid var(--gray-200);
+      border-radius: 10px;
       outline: none;
       transition: all 0.2s;
+      background: var(--gray-50);
     }
 
     .url-input:focus {
       border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+      background: white;
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+    }
+
+    .url-input::placeholder {
+      color: var(--gray-400);
     }
 
     .analyze-btn {
-      padding: 16px 32px;
-      font-size: 18px;
+      padding: 14px 28px;
+      font-size: 16px;
       font-weight: 600;
+      font-family: inherit;
       color: white;
-      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      background: var(--accent);
       border: none;
-      border-radius: 12px;
+      border-radius: 10px;
       cursor: pointer;
       transition: all 0.2s;
       white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
     .analyze-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+      background: var(--accent-dark);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
     }
 
     .analyze-btn:disabled {
@@ -135,9 +186,9 @@
       transform: none;
     }
 
-    .helper-text {
-      font-size: 14px;
-      color: var(--gray-500);
+    .analyze-btn svg {
+      width: 18px;
+      height: 18px;
     }
 
     /* Loading State */
@@ -152,13 +203,13 @@
     }
 
     .spinner {
-      width: 60px;
-      height: 60px;
-      border: 4px solid var(--gray-200);
+      width: 48px;
+      height: 48px;
+      border: 3px solid var(--gray-200);
       border-top-color: var(--primary);
       border-radius: 50%;
       animation: spin 1s linear infinite;
-      margin: 0 auto 20px;
+      margin: 0 auto 16px;
     }
 
     @keyframes spin {
@@ -166,8 +217,8 @@
     }
 
     .loading p {
-      font-size: 18px;
-      color: var(--gray-600);
+      font-size: 16px;
+      color: var(--gray-500);
     }
 
     /* Error State */
@@ -175,10 +226,11 @@
       background: #fef2f2;
       border: 1px solid #fecaca;
       color: var(--danger);
-      padding: 16px 20px;
-      border-radius: 12px;
-      margin-top: 20px;
+      padding: 14px 18px;
+      border-radius: 10px;
+      margin-top: 16px;
       display: none;
+      font-size: 14px;
     }
 
     .error.active {
@@ -194,122 +246,195 @@
       display: block;
     }
 
-    /* Score Header */
-    .score-header {
-      text-align: center;
-      padding: 40px;
-      background: linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 100%);
-      border-radius: 16px;
-      margin-bottom: 30px;
+    /* Score Cards Grid */
+    .score-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
     }
 
-    .page-title {
+    .score-card {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      border: 1px solid var(--gray-200);
+      text-align: left;
+    }
+
+    .score-card.highlight {
+      border: 2px solid var(--primary);
+      background: linear-gradient(135deg, var(--mint-light) 0%, white 100%);
+    }
+
+    .score-card-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    .score-card-label.low { color: var(--danger); }
+    .score-card-label.medium { color: var(--warning); }
+    .score-card-label.high { color: var(--primary); }
+
+    .score-card-label svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .score-card-value {
+      font-size: 36px;
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .score-card-value.low { color: var(--danger); }
+    .score-card-value.medium { color: var(--warning); }
+    .score-card-value.high { color: var(--primary); }
+
+    .score-card-desc {
       font-size: 14px;
       color: var(--gray-500);
-      margin-bottom: 8px;
-      word-break: break-all;
     }
 
-    .score-circle {
-      width: 160px;
-      height: 160px;
-      border-radius: 50%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 20px;
-      position: relative;
-    }
-
-    .score-circle::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-radius: 50%;
-      padding: 6px;
-      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-      -webkit-mask-composite: xor;
-      mask-composite: exclude;
-    }
-
-    .score-circle.excellent::before { background: linear-gradient(135deg, #10b981, #059669); }
-    .score-circle.great::before { background: linear-gradient(135deg, #10b981, #059669); }
-    .score-circle.good::before { background: linear-gradient(135deg, #f59e0b, #d97706); }
-    .score-circle.average::before { background: linear-gradient(135deg, #f59e0b, #d97706); }
-    .score-circle.below-average::before { background: linear-gradient(135deg, #ef4444, #dc2626); }
-    .score-circle.poor::before { background: linear-gradient(135deg, #ef4444, #dc2626); }
-
-    .score-number {
-      font-size: 56px;
-      font-weight: 800;
-      line-height: 1;
-    }
-
-    .score-circle.excellent .score-number,
-    .score-circle.great .score-number { color: var(--success); }
-    .score-circle.good .score-number,
-    .score-circle.average .score-number { color: var(--warning); }
-    .score-circle.below-average .score-number,
-    .score-circle.poor .score-number { color: var(--danger); }
-
-    .score-grade {
-      font-size: 24px;
-      font-weight: 700;
-      margin-top: 4px;
-    }
-
-    .score-label {
-      font-size: 18px;
-      color: var(--gray-600);
+    .score-badge {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 500;
+      padding: 4px 10px;
+      border-radius: 6px;
       margin-top: 12px;
     }
 
-    /* Analysis Categories */
+    .score-badge.low {
+      background: #fee2e2;
+      color: #dc2626;
+    }
+
+    .score-badge.medium {
+      background: #fef3c7;
+      color: #d97706;
+    }
+
+    .score-badge.high {
+      background: #d1fae5;
+      color: #059669;
+    }
+
+    /* URL Display */
+    .url-display {
+      background: var(--gray-50);
+      border-radius: 10px;
+      padding: 12px 16px;
+      margin-bottom: 24px;
+      font-size: 14px;
+      color: var(--gray-600);
+      word-break: break-all;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .url-display svg {
+      width: 16px;
+      height: 16px;
+      color: var(--gray-400);
+      flex-shrink: 0;
+    }
+
+    /* Section Headers */
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .section-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--mint-bg);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .section-icon svg {
+      width: 18px;
+      height: 18px;
+      color: var(--primary);
+    }
+
+    .section-header h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--gray-800);
+    }
+
+    .section-header p {
+      font-size: 14px;
+      color: var(--gray-500);
+      margin-top: 2px;
+    }
+
+    /* Categories */
+    .categories-card {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
     .categories {
       display: grid;
-      gap: 16px;
-      margin-bottom: 30px;
+      gap: 12px;
     }
 
     .category {
       background: var(--gray-50);
-      border-radius: 12px;
-      padding: 20px;
+      border-radius: 10px;
+      padding: 16px;
+      border: 1px solid var(--gray-100);
     }
 
     .category-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 12px;
-      cursor: pointer;
+      margin-bottom: 10px;
     }
 
     .category-title {
-      font-size: 16px;
+      font-size: 14px;
       font-weight: 600;
+      color: var(--gray-700);
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
 
     .category-icon {
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 16px;
+      font-size: 14px;
     }
 
     .category-score {
-      font-size: 14px;
+      font-size: 12px;
       font-weight: 600;
-      padding: 4px 12px;
+      padding: 4px 10px;
       border-radius: 20px;
     }
 
@@ -329,30 +454,31 @@
     }
 
     .category-findings {
-      font-size: 14px;
+      font-size: 13px;
       color: var(--gray-600);
+      line-height: 1.5;
     }
 
     .category-findings li {
-      margin-bottom: 6px;
+      margin-bottom: 4px;
       list-style: none;
     }
 
     /* Recommendations */
-    .recommendations-section {
-      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    .recommendations-card {
+      background: linear-gradient(135deg, #fef9c3 0%, #fef3c7 100%);
       border-radius: 16px;
       padding: 24px;
-      margin-bottom: 30px;
+      margin-bottom: 24px;
+      border: 1px solid #fde68a;
     }
 
-    .recommendations-section h3 {
-      font-size: 18px;
-      color: var(--gray-800);
-      margin-bottom: 16px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+    .recommendations-card .section-icon {
+      background: white;
+    }
+
+    .recommendations-card .section-icon svg {
+      color: var(--warning);
     }
 
     .recommendation-list {
@@ -361,13 +487,14 @@
 
     .recommendation-list li {
       background: white;
-      padding: 12px 16px;
+      padding: 12px 14px;
       border-radius: 8px;
       margin-bottom: 8px;
-      font-size: 14px;
+      font-size: 13px;
       display: flex;
       align-items: flex-start;
       gap: 10px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
     }
 
     .recommendation-list li:last-child {
@@ -378,69 +505,74 @@
       font-size: 10px;
       font-weight: 600;
       text-transform: uppercase;
-      padding: 2px 8px;
+      padding: 3px 8px;
       border-radius: 4px;
-      background: var(--gray-200);
+      background: var(--gray-100);
       color: var(--gray-600);
       white-space: nowrap;
+      flex-shrink: 0;
     }
 
     /* Lead Capture */
     .lead-capture {
-      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      background: var(--accent);
       border-radius: 16px;
-      padding: 30px;
+      padding: 28px;
       text-align: center;
       color: white;
     }
 
     .lead-capture h3 {
-      font-size: 22px;
-      margin-bottom: 8px;
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 6px;
     }
 
     .lead-capture p {
       opacity: 0.9;
       margin-bottom: 20px;
+      font-size: 15px;
     }
 
     .lead-form {
       display: flex;
-      gap: 12px;
-      max-width: 450px;
+      gap: 10px;
+      max-width: 420px;
       margin: 0 auto;
     }
 
     .lead-form input {
       flex: 1;
-      padding: 14px 18px;
-      font-size: 16px;
+      padding: 12px 16px;
+      font-size: 15px;
+      font-family: inherit;
       border: none;
-      border-radius: 10px;
+      border-radius: 8px;
       outline: none;
     }
 
     .lead-form button {
-      padding: 14px 24px;
-      font-size: 16px;
+      padding: 12px 20px;
+      font-size: 15px;
       font-weight: 600;
-      color: var(--primary);
+      font-family: inherit;
+      color: var(--accent);
       background: white;
       border: none;
-      border-radius: 10px;
+      border-radius: 8px;
       cursor: pointer;
       transition: all 0.2s;
       white-space: nowrap;
     }
 
     .lead-form button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     }
 
     .lead-success {
       display: none;
-      padding: 20px;
+      padding: 16px;
       text-align: center;
     }
 
@@ -449,47 +581,55 @@
     }
 
     .lead-success p {
-      font-size: 18px;
+      font-size: 16px;
       margin: 0;
+      opacity: 1;
     }
 
     /* New Analysis Button */
     .new-analysis {
       text-align: center;
-      margin-top: 30px;
+      margin-top: 24px;
     }
 
     .new-analysis button {
-      padding: 12px 24px;
-      font-size: 16px;
+      padding: 12px 20px;
+      font-size: 14px;
       font-weight: 500;
+      font-family: inherit;
       color: var(--gray-600);
-      background: var(--gray-100);
-      border: none;
-      border-radius: 10px;
+      background: white;
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
       cursor: pointer;
       transition: all 0.2s;
     }
 
     .new-analysis button:hover {
-      background: var(--gray-200);
+      background: var(--gray-50);
+      border-color: var(--gray-300);
     }
 
     /* Footer */
     .footer {
       text-align: center;
-      padding: 40px 20px;
-      color: rgba(255,255,255,0.8);
+      padding: 32px 20px;
+      color: var(--gray-500);
       font-size: 14px;
     }
 
     .footer a {
-      color: white;
+      color: var(--gray-700);
       text-decoration: none;
+      font-weight: 500;
+    }
+
+    .footer a:hover {
+      color: var(--primary);
     }
 
     /* Responsive */
-    @media (max-width: 640px) {
+    @media (max-width: 768px) {
       .header h1 {
         font-size: 32px;
       }
@@ -498,25 +638,23 @@
         font-size: 16px;
       }
 
-      .input-section {
-        flex-direction: column;
+      .score-grid {
+        grid-template-columns: 1fr;
       }
 
-      .card-body {
-        padding: 24px;
+      .input-section {
+        flex-direction: column;
       }
 
       .lead-form {
         flex-direction: column;
       }
 
-      .score-circle {
-        width: 140px;
-        height: 140px;
-      }
-
-      .score-number {
-        font-size: 44px;
+      .card-body,
+      .input-card,
+      .categories-card,
+      .recommendations-card {
+        padding: 20px;
       }
     }
   </style>
@@ -524,80 +662,146 @@
 <body>
   <div class="container">
     <header class="header">
-      <div class="logo">CRO Agency</div>
+      <div class="logo">IMPACT.</div>
       <h1>Landing Page Grader</h1>
       <p>Get a free, instant CRO analysis of your landing page with actionable recommendations</p>
     </header>
 
-    <div class="card">
-      <div class="card-body">
-        <!-- Input Form -->
-        <div id="inputSection">
-          <div class="input-section">
-            <input
-              type="url"
-              class="url-input"
-              id="urlInput"
-              placeholder="Enter your landing page URL..."
-              autocomplete="url"
-            >
-            <button class="analyze-btn" id="analyzeBtn" onclick="analyzePage()">
-              Analyze Now
-            </button>
-          </div>
-          <p class="helper-text">Example: https://example.com/landing-page</p>
+    <!-- Input Section -->
+    <div class="input-card" id="inputSection">
+      <div class="input-header">
+        <div class="input-icon">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
+          </svg>
         </div>
-
-        <!-- Loading State -->
-        <div class="loading" id="loading">
-          <div class="spinner"></div>
-          <p>Analyzing your landing page...</p>
-        </div>
-
-        <!-- Error State -->
-        <div class="error" id="error"></div>
-
-        <!-- Results -->
-        <div class="results" id="results">
-          <div class="score-header">
-            <p class="page-title" id="pageTitle"></p>
-            <div class="score-circle" id="scoreCircle">
-              <span class="score-number" id="scoreNumber">0</span>
-              <span class="score-grade" id="scoreGrade">-</span>
-            </div>
-            <p class="score-label" id="scoreLabel">Overall CRO Score</p>
-          </div>
-
-          <div class="categories" id="categories"></div>
-
-          <div class="recommendations-section" id="recommendationsSection">
-            <h3>💡 Top Recommendations</h3>
-            <ul class="recommendation-list" id="recommendationsList"></ul>
-          </div>
-
-          <div class="lead-capture" id="leadCapture">
-            <h3>Want the Full Detailed Report?</h3>
-            <p>Get a comprehensive PDF with prioritized action items sent to your inbox.</p>
-            <form class="lead-form" id="leadForm" onsubmit="submitLead(event)">
-              <input type="email" id="emailInput" placeholder="Enter your email" required>
-              <button type="submit">Get Report</button>
-            </form>
-            <div class="lead-success" id="leadSuccess">
-              <p>✅ Check your inbox for the full report!</p>
-            </div>
-          </div>
-
-          <div class="new-analysis">
-            <button onclick="resetAnalysis()">← Analyze Another Page</button>
-          </div>
-        </div>
+        <h2>Enter Your Landing Page URL</h2>
       </div>
+      <div class="input-section">
+        <input
+          type="url"
+          class="url-input"
+          id="urlInput"
+          placeholder="https://example.com/landing-page"
+          autocomplete="url"
+        >
+        <button class="analyze-btn" id="analyzeBtn" onclick="analyzePage()">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+          </svg>
+          Analyze Page
+        </button>
+      </div>
+      <div class="error" id="error"></div>
     </div>
 
-    <footer class="footer">
-      <p>Powered by <a href="#">Your CRO Agency</a> | Free tool to help you convert more visitors</p>
-    </footer>
+    <!-- Loading State -->
+    <div class="input-card loading" id="loading">
+      <div class="spinner"></div>
+      <p>Analyzing your landing page...</p>
+    </div>
+
+    <!-- Results -->
+    <div class="results" id="results">
+      <!-- URL Display -->
+      <div class="url-display" id="urlDisplay">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+        </svg>
+        <span id="pageUrl"></span>
+      </div>
+
+      <!-- Score Cards -->
+      <div class="score-grid" id="scoreGrid">
+        <div class="score-card" id="lowScoreCard">
+          <div class="score-card-label low" id="lowLabel">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+            </svg>
+            NEEDS WORK
+          </div>
+          <div class="score-card-value low" id="lowScore">0</div>
+          <div class="score-card-desc">CRO Score</div>
+          <div class="score-badge low" id="lowBadge">Below 50%</div>
+        </div>
+        <div class="score-card highlight" id="mainScoreCard">
+          <div class="score-card-label high" id="mainLabel">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            YOUR SCORE
+          </div>
+          <div class="score-card-value high" id="mainScore">0</div>
+          <div class="score-card-desc">CRO Score</div>
+          <div class="score-badge high" id="mainBadge">Grade: A</div>
+        </div>
+        <div class="score-card" id="highScoreCard">
+          <div class="score-card-label high" id="highLabel">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+            </svg>
+            TARGET
+          </div>
+          <div class="score-card-value high" id="highScore">90+</div>
+          <div class="score-card-desc">CRO Score</div>
+          <div class="score-badge high" id="highBadge">Industry Best</div>
+        </div>
+      </div>
+
+      <!-- Categories -->
+      <div class="categories-card">
+        <div class="section-header">
+          <div class="section-icon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+            </svg>
+          </div>
+          <div>
+            <h3>Detailed Analysis</h3>
+            <p>Breakdown by conversion factor</p>
+          </div>
+        </div>
+        <div class="categories" id="categories"></div>
+      </div>
+
+      <!-- Recommendations -->
+      <div class="recommendations-card" id="recommendationsSection">
+        <div class="section-header">
+          <div class="section-icon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+            </svg>
+          </div>
+          <div>
+            <h3>Top Recommendations</h3>
+            <p>Quick wins to improve conversions</p>
+          </div>
+        </div>
+        <ul class="recommendation-list" id="recommendationsList"></ul>
+      </div>
+
+      <!-- Lead Capture -->
+      <div class="lead-capture" id="leadCapture">
+        <h3>Want the Full Detailed Report?</h3>
+        <p>Get a comprehensive PDF with prioritized action items sent to your inbox.</p>
+        <form class="lead-form" id="leadForm" onsubmit="submitLead(event)">
+          <input type="email" id="emailInput" placeholder="Enter your email" required>
+          <button type="submit">Get Report</button>
+        </form>
+        <div class="lead-success" id="leadSuccess">
+          <p>Check your inbox for the full report!</p>
+        </div>
+      </div>
+
+      <div class="new-analysis">
+        <button onclick="resetAnalysis()">Analyze Another Page</button>
+      </div>
+    </div>
   </div>
+
+  <footer class="footer">
+    <p>Powered by <a href="#">IMPACT.</a> | Free CRO tools to help you convert more visitors</p>
+  </footer>
 
   <script>
     const categoryConfig = {
@@ -621,7 +825,6 @@
         return;
       }
 
-      // Show loading
       document.getElementById('inputSection').style.display = 'none';
       document.getElementById('loading').classList.add('active');
       document.getElementById('error').classList.remove('active');
@@ -660,24 +863,29 @@
       document.getElementById('loading').classList.remove('active');
       document.getElementById('results').classList.add('active');
 
-      // Score header
-      document.getElementById('pageTitle').textContent = data.url;
-      document.getElementById('scoreNumber').textContent = data.overallScore;
-      document.getElementById('scoreGrade').textContent = data.grade;
+      // URL display
+      document.getElementById('pageUrl').textContent = data.url;
 
-      const scoreCircle = document.getElementById('scoreCircle');
-      scoreCircle.className = 'score-circle ' + data.gradeClass;
+      // Score cards
+      const score = data.overallScore;
+      const scoreClass = score >= 70 ? 'high' : score >= 50 ? 'medium' : 'low';
 
-      // Score label
-      const labels = {
-        excellent: 'Excellent! Your page is well-optimized.',
-        great: 'Great job! Room for minor improvements.',
-        good: 'Good foundation with opportunities to improve.',
-        average: 'Average. Several areas need attention.',
-        'below-average': 'Below average. Significant improvements needed.',
-        poor: 'Needs work. Many conversion opportunities missed.',
-      };
-      document.getElementById('scoreLabel').textContent = labels[data.gradeClass] || 'Overall CRO Score';
+      // Update main score card
+      document.getElementById('mainScore').textContent = score;
+      document.getElementById('mainScore').className = 'score-card-value ' + scoreClass;
+      document.getElementById('mainBadge').textContent = 'Grade: ' + data.grade;
+      document.getElementById('mainBadge').className = 'score-badge ' + scoreClass;
+      document.getElementById('mainLabel').className = 'score-card-label ' + scoreClass;
+
+      // Update comparison cards
+      const lowScore = Math.max(0, score - 30);
+      const highTarget = Math.min(100, Math.max(90, score + 20));
+
+      document.getElementById('lowScore').textContent = lowScore;
+      document.getElementById('lowBadge').textContent = 'Without CRO focus';
+
+      document.getElementById('highScore').textContent = highTarget + '+';
+      document.getElementById('highBadge').textContent = 'With optimization';
 
       // Categories
       const categoriesEl = document.getElementById('categories');
@@ -761,7 +969,6 @@
       analysisData = null;
     }
 
-    // Enter key support
     document.getElementById('urlInput').addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
         analyzePage();
