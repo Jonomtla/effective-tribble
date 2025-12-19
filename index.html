@@ -791,8 +791,40 @@
   </footer>
 
   <script>
-    // CORS Proxy for fetching external pages
-    const CORS_PROXY = 'https://api.allorigins.win/raw?url=';
+    // Multiple CORS proxies for fallback
+    const CORS_PROXIES = [
+      { url: 'https://api.allorigins.win/raw?url=', encode: true },
+      { url: 'https://corsproxy.io/?', encode: true },
+      { url: 'https://api.codetabs.com/v1/proxy?quest=', encode: true },
+    ];
+
+    // Fetch with fallback proxies
+    async function fetchWithProxy(targetUrl) {
+      let lastError;
+
+      for (const proxy of CORS_PROXIES) {
+        try {
+          const proxyUrl = proxy.url + (proxy.encode ? encodeURIComponent(targetUrl) : targetUrl);
+          const response = await fetch(proxyUrl, {
+            headers: {
+              'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+            }
+          });
+
+          if (response.ok) {
+            const text = await response.text();
+            if (text && text.length > 100) {
+              return text;
+            }
+          }
+        } catch (err) {
+          lastError = err;
+          console.log(`Proxy failed: ${proxy.url}, trying next...`);
+        }
+      }
+
+      throw new Error(lastError?.message || 'All proxies failed to fetch the page');
+    }
 
     const categoryConfig = {
       headline: { name: 'Headline', icon: '📝', bg: '#ede9fe' },
@@ -1131,14 +1163,12 @@
       document.getElementById('results').classList.remove('active');
 
       try {
-        // Fetch page via CORS proxy
-        const response = await fetch(CORS_PROXY + encodeURIComponent(url));
+        // Fetch page via CORS proxy (with fallbacks)
+        const html = await fetchWithProxy(url);
 
-        if (!response.ok) {
+        if (!html || html.length < 100) {
           throw new Error('Could not fetch the page. Please check the URL.');
         }
-
-        const html = await response.text();
 
         // Parse HTML
         const parser = new DOMParser();
