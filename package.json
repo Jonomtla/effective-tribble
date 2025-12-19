@@ -1,0 +1,19 @@
+{
+  "name": "landing-page-grader",
+  "version": "1.0.0",
+  "description": "CRO Landing Page Grader - Analyze and score landing pages for conversion optimization",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": ["cro", "landing-page", "conversion", "optimization", "grader"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.6.2",
+    "cheerio": "^1.0.0-rc.12",
+    "cors": "^2.8.5",
+    "express": "^4.18.2"
+  }
+}

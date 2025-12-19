@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Landing Page Grader | Free CRO Analysis Tool</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --primary-light: #818cf8;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-300: #d1d5db;
+      --gray-400: #9ca3af;
+      --gray-500: #6b7280;
+      --gray-600: #4b5563;
+      --gray-700: #374151;
+      --gray-800: #1f2937;
+      --gray-900: #111827;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: var(--gray-800);
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .logo {
+      font-size: 14px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.9);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 20px;
+    }
+
+    .header h1 {
+      font-size: 48px;
+      font-weight: 800;
+      color: white;
+      margin-bottom: 16px;
+      line-height: 1.1;
+    }
+
+    .header p {
+      font-size: 20px;
+      color: rgba(255,255,255,0.9);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* Main Card */
+    .card {
+      background: white;
+      border-radius: 24px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      overflow: hidden;
+    }
+
+    .card-body {
+      padding: 40px;
+    }
+
+    /* Input Section */
+    .input-section {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .url-input {
+      flex: 1;
+      padding: 16px 20px;
+      font-size: 18px;
+      border: 2px solid var(--gray-200);
+      border-radius: 12px;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .url-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+
+    .analyze-btn {
+      padding: 16px 32px;
+      font-size: 18px;
+      font-weight: 600;
+      color: white;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .analyze-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+    }
+
+    .analyze-btn:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .helper-text {
+      font-size: 14px;
+      color: var(--gray-500);
+    }
+
+    /* Loading State */
+    .loading {
+      text-align: center;
+      padding: 60px 20px;
+      display: none;
+    }
+
+    .loading.active {
+      display: block;
+    }
+
+    .spinner {
+      width: 60px;
+      height: 60px;
+      border: 4px solid var(--gray-200);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loading p {
+      font-size: 18px;
+      color: var(--gray-600);
+    }
+
+    /* Error State */
+    .error {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: var(--danger);
+      padding: 16px 20px;
+      border-radius: 12px;
+      margin-top: 20px;
+      display: none;
+    }
+
+    .error.active {
+      display: block;
+    }
+
+    /* Results Section */
+    .results {
+      display: none;
+    }
+
+    .results.active {
+      display: block;
+    }
+
+    /* Score Header */
+    .score-header {
+      text-align: center;
+      padding: 40px;
+      background: linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 100%);
+      border-radius: 16px;
+      margin-bottom: 30px;
+    }
+
+    .page-title {
+      font-size: 14px;
+      color: var(--gray-500);
+      margin-bottom: 8px;
+      word-break: break-all;
+    }
+
+    .score-circle {
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      position: relative;
+    }
+
+    .score-circle::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      padding: 6px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+    }
+
+    .score-circle.excellent::before { background: linear-gradient(135deg, #10b981, #059669); }
+    .score-circle.great::before { background: linear-gradient(135deg, #10b981, #059669); }
+    .score-circle.good::before { background: linear-gradient(135deg, #f59e0b, #d97706); }
+    .score-circle.average::before { background: linear-gradient(135deg, #f59e0b, #d97706); }
+    .score-circle.below-average::before { background: linear-gradient(135deg, #ef4444, #dc2626); }
+    .score-circle.poor::before { background: linear-gradient(135deg, #ef4444, #dc2626); }
+
+    .score-number {
+      font-size: 56px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .score-circle.excellent .score-number,
+    .score-circle.great .score-number { color: var(--success); }
+    .score-circle.good .score-number,
+    .score-circle.average .score-number { color: var(--warning); }
+    .score-circle.below-average .score-number,
+    .score-circle.poor .score-number { color: var(--danger); }
+
+    .score-grade {
+      font-size: 24px;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+
+    .score-label {
+      font-size: 18px;
+      color: var(--gray-600);
+      margin-top: 12px;
+    }
+
+    /* Analysis Categories */
+    .categories {
+      display: grid;
+      gap: 16px;
+      margin-bottom: 30px;
+    }
+
+    .category {
+      background: var(--gray-50);
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .category-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      cursor: pointer;
+    }
+
+    .category-title {
+      font-size: 16px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .category-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+
+    .category-score {
+      font-size: 14px;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 20px;
+    }
+
+    .category-score.high {
+      background: #d1fae5;
+      color: #059669;
+    }
+
+    .category-score.medium {
+      background: #fef3c7;
+      color: #d97706;
+    }
+
+    .category-score.low {
+      background: #fee2e2;
+      color: #dc2626;
+    }
+
+    .category-findings {
+      font-size: 14px;
+      color: var(--gray-600);
+    }
+
+    .category-findings li {
+      margin-bottom: 6px;
+      list-style: none;
+    }
+
+    /* Recommendations */
+    .recommendations-section {
+      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 30px;
+    }
+
+    .recommendations-section h3 {
+      font-size: 18px;
+      color: var(--gray-800);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .recommendation-list {
+      list-style: none;
+    }
+
+    .recommendation-list li {
+      background: white;
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      font-size: 14px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .recommendation-list li:last-child {
+      margin-bottom: 0;
+    }
+
+    .rec-badge {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: var(--gray-200);
+      color: var(--gray-600);
+      white-space: nowrap;
+    }
+
+    /* Lead Capture */
+    .lead-capture {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      border-radius: 16px;
+      padding: 30px;
+      text-align: center;
+      color: white;
+    }
+
+    .lead-capture h3 {
+      font-size: 22px;
+      margin-bottom: 8px;
+    }
+
+    .lead-capture p {
+      opacity: 0.9;
+      margin-bottom: 20px;
+    }
+
+    .lead-form {
+      display: flex;
+      gap: 12px;
+      max-width: 450px;
+      margin: 0 auto;
+    }
+
+    .lead-form input {
+      flex: 1;
+      padding: 14px 18px;
+      font-size: 16px;
+      border: none;
+      border-radius: 10px;
+      outline: none;
+    }
+
+    .lead-form button {
+      padding: 14px 24px;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--primary);
+      background: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .lead-form button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .lead-success {
+      display: none;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .lead-success.active {
+      display: block;
+    }
+
+    .lead-success p {
+      font-size: 18px;
+      margin: 0;
+    }
+
+    /* New Analysis Button */
+    .new-analysis {
+      text-align: center;
+      margin-top: 30px;
+    }
+
+    .new-analysis button {
+      padding: 12px 24px;
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--gray-600);
+      background: var(--gray-100);
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .new-analysis button:hover {
+      background: var(--gray-200);
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 40px 20px;
+      color: rgba(255,255,255,0.8);
+      font-size: 14px;
+    }
+
+    .footer a {
+      color: white;
+      text-decoration: none;
+    }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      .header h1 {
+        font-size: 32px;
+      }
+
+      .header p {
+        font-size: 16px;
+      }
+
+      .input-section {
+        flex-direction: column;
+      }
+
+      .card-body {
+        padding: 24px;
+      }
+
+      .lead-form {
+        flex-direction: column;
+      }
+
+      .score-circle {
+        width: 140px;
+        height: 140px;
+      }
+
+      .score-number {
+        font-size: 44px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <div class="logo">CRO Agency</div>
+      <h1>Landing Page Grader</h1>
+      <p>Get a free, instant CRO analysis of your landing page with actionable recommendations</p>
+    </header>
+
+    <div class="card">
+      <div class="card-body">
+        <!-- Input Form -->
+        <div id="inputSection">
+          <div class="input-section">
+            <input
+              type="url"
+              class="url-input"
+              id="urlInput"
+              placeholder="Enter your landing page URL..."
+              autocomplete="url"
+            >
+            <button class="analyze-btn" id="analyzeBtn" onclick="analyzePage()">
+              Analyze Now
+            </button>
+          </div>
+          <p class="helper-text">Example: https://example.com/landing-page</p>
+        </div>
+
+        <!-- Loading State -->
+        <div class="loading" id="loading">
+          <div class="spinner"></div>
+          <p>Analyzing your landing page...</p>
+        </div>
+
+        <!-- Error State -->
+        <div class="error" id="error"></div>
+
+        <!-- Results -->
+        <div class="results" id="results">
+          <div class="score-header">
+            <p class="page-title" id="pageTitle"></p>
+            <div class="score-circle" id="scoreCircle">
+              <span class="score-number" id="scoreNumber">0</span>
+              <span class="score-grade" id="scoreGrade">-</span>
+            </div>
+            <p class="score-label" id="scoreLabel">Overall CRO Score</p>
+          </div>
+
+          <div class="categories" id="categories"></div>
+
+          <div class="recommendations-section" id="recommendationsSection">
+            <h3>💡 Top Recommendations</h3>
+            <ul class="recommendation-list" id="recommendationsList"></ul>
+          </div>
+
+          <div class="lead-capture" id="leadCapture">
+            <h3>Want the Full Detailed Report?</h3>
+            <p>Get a comprehensive PDF with prioritized action items sent to your inbox.</p>
+            <form class="lead-form" id="leadForm" onsubmit="submitLead(event)">
+              <input type="email" id="emailInput" placeholder="Enter your email" required>
+              <button type="submit">Get Report</button>
+            </form>
+            <div class="lead-success" id="leadSuccess">
+              <p>✅ Check your inbox for the full report!</p>
+            </div>
+          </div>
+
+          <div class="new-analysis">
+            <button onclick="resetAnalysis()">← Analyze Another Page</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <p>Powered by <a href="#">Your CRO Agency</a> | Free tool to help you convert more visitors</p>
+    </footer>
+  </div>
+
+  <script>
+    const categoryConfig = {
+      headline: { name: 'Headline', icon: '📝', bg: '#ede9fe' },
+      cta: { name: 'Call-to-Action', icon: '🎯', bg: '#dbeafe' },
+      trustSignals: { name: 'Trust Signals', icon: '🛡️', bg: '#d1fae5' },
+      valueProposition: { name: 'Value Proposition', icon: '💎', bg: '#fef3c7' },
+      form: { name: 'Form Optimization', icon: '📋', bg: '#fce7f3' },
+      mobile: { name: 'Mobile Ready', icon: '📱', bg: '#e0e7ff' },
+      pageStructure: { name: 'Page Structure', icon: '🏗️', bg: '#f3e8ff' },
+    };
+
+    let analysisData = null;
+
+    async function analyzePage() {
+      const urlInput = document.getElementById('urlInput');
+      const url = urlInput.value.trim();
+
+      if (!url) {
+        showError('Please enter a URL to analyze.');
+        return;
+      }
+
+      // Show loading
+      document.getElementById('inputSection').style.display = 'none';
+      document.getElementById('loading').classList.add('active');
+      document.getElementById('error').classList.remove('active');
+      document.getElementById('results').classList.remove('active');
+
+      try {
+        const response = await fetch('/api/analyze', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Analysis failed');
+        }
+
+        analysisData = data;
+        displayResults(data);
+
+      } catch (error) {
+        document.getElementById('loading').classList.remove('active');
+        document.getElementById('inputSection').style.display = 'block';
+        showError(error.message);
+      }
+    }
+
+    function showError(message) {
+      const errorEl = document.getElementById('error');
+      errorEl.textContent = message;
+      errorEl.classList.add('active');
+    }
+
+    function displayResults(data) {
+      document.getElementById('loading').classList.remove('active');
+      document.getElementById('results').classList.add('active');
+
+      // Score header
+      document.getElementById('pageTitle').textContent = data.url;
+      document.getElementById('scoreNumber').textContent = data.overallScore;
+      document.getElementById('scoreGrade').textContent = data.grade;
+
+      const scoreCircle = document.getElementById('scoreCircle');
+      scoreCircle.className = 'score-circle ' + data.gradeClass;
+
+      // Score label
+      const labels = {
+        excellent: 'Excellent! Your page is well-optimized.',
+        great: 'Great job! Room for minor improvements.',
+        good: 'Good foundation with opportunities to improve.',
+        average: 'Average. Several areas need attention.',
+        'below-average': 'Below average. Significant improvements needed.',
+        poor: 'Needs work. Many conversion opportunities missed.',
+      };
+      document.getElementById('scoreLabel').textContent = labels[data.gradeClass] || 'Overall CRO Score';
+
+      // Categories
+      const categoriesEl = document.getElementById('categories');
+      categoriesEl.innerHTML = '';
+
+      Object.entries(data.analyses).forEach(([key, analysis]) => {
+        const config = categoryConfig[key];
+        const percentage = Math.round((analysis.points / analysis.max) * 100);
+        const scoreClass = percentage >= 70 ? 'high' : percentage >= 40 ? 'medium' : 'low';
+
+        const categoryHTML = `
+          <div class="category">
+            <div class="category-header">
+              <div class="category-title">
+                <span class="category-icon" style="background: ${config.bg}">${config.icon}</span>
+                ${config.name}
+              </div>
+              <span class="category-score ${scoreClass}">${analysis.points}/${analysis.max} pts</span>
+            </div>
+            <ul class="category-findings">
+              ${analysis.findings.map(f => `<li>${f}</li>`).join('')}
+            </ul>
+          </div>
+        `;
+        categoriesEl.innerHTML += categoryHTML;
+      });
+
+      // Recommendations
+      const recsList = document.getElementById('recommendationsList');
+      recsList.innerHTML = '';
+
+      if (data.recommendations.length === 0) {
+        document.getElementById('recommendationsSection').style.display = 'none';
+      } else {
+        document.getElementById('recommendationsSection').style.display = 'block';
+        data.recommendations.slice(0, 6).forEach(rec => {
+          const config = categoryConfig[rec.category];
+          recsList.innerHTML += `
+            <li>
+              <span class="rec-badge">${config.name}</span>
+              ${rec.recommendation}
+            </li>
+          `;
+        });
+      }
+
+      // Reset lead form
+      document.getElementById('leadForm').style.display = 'flex';
+      document.getElementById('leadSuccess').classList.remove('active');
+    }
+
+    async function submitLead(event) {
+      event.preventDefault();
+
+      const email = document.getElementById('emailInput').value;
+
+      try {
+        await fetch('/api/leads', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email,
+            url: analysisData?.url,
+            score: analysisData?.overallScore,
+          }),
+        });
+
+        document.getElementById('leadForm').style.display = 'none';
+        document.getElementById('leadSuccess').classList.add('active');
+
+      } catch (error) {
+        console.error('Lead capture error:', error);
+      }
+    }
+
+    function resetAnalysis() {
+      document.getElementById('results').classList.remove('active');
+      document.getElementById('inputSection').style.display = 'block';
+      document.getElementById('error').classList.remove('active');
+      document.getElementById('urlInput').value = '';
+      analysisData = null;
+    }
+
+    // Enter key support
+    document.getElementById('urlInput').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        analyzePage();
+      }
+    });
+  </script>
+</body>
+</html>
