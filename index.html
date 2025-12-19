@@ -791,353 +791,665 @@
   </footer>
 
   <script>
-    // Multiple CORS proxies for fallback
+    // ============================================
+    // CORS PROXY CONFIGURATION
+    // ============================================
     const CORS_PROXIES = [
       { url: 'https://api.allorigins.win/raw?url=', encode: true },
       { url: 'https://corsproxy.io/?', encode: true },
       { url: 'https://api.codetabs.com/v1/proxy?quest=', encode: true },
     ];
 
-    // Fetch with fallback proxies
     async function fetchWithProxy(targetUrl) {
       let lastError;
-
       for (const proxy of CORS_PROXIES) {
         try {
           const proxyUrl = proxy.url + (proxy.encode ? encodeURIComponent(targetUrl) : targetUrl);
           const response = await fetch(proxyUrl, {
-            headers: {
-              'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-            }
+            headers: { 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' }
           });
-
           if (response.ok) {
             const text = await response.text();
-            if (text && text.length > 100) {
-              return text;
-            }
+            if (text && text.length > 100) return text;
           }
         } catch (err) {
           lastError = err;
-          console.log(`Proxy failed: ${proxy.url}, trying next...`);
         }
       }
-
       throw new Error(lastError?.message || 'All proxies failed to fetch the page');
     }
 
+    // ============================================
+    // CRO FRAMEWORK ANALYSIS ENGINE
+    // Based on: LIFT Model, Cialdini's Principles, Fogg Behavior Model
+    // ============================================
+
     const categoryConfig = {
-      headline: { name: 'Headline', icon: '📝', bg: '#ede9fe' },
-      cta: { name: 'Call-to-Action', icon: '🎯', bg: '#dbeafe' },
-      trustSignals: { name: 'Trust Signals', icon: '🛡️', bg: '#d1fae5' },
+      clarity: { name: 'Clarity (LIFT)', icon: '🔍', bg: '#dbeafe' },
       valueProposition: { name: 'Value Proposition', icon: '💎', bg: '#fef3c7' },
-      form: { name: 'Form Optimization', icon: '📋', bg: '#fce7f3' },
-      mobile: { name: 'Mobile Ready', icon: '📱', bg: '#e0e7ff' },
-      pageStructure: { name: 'Page Structure', icon: '🏗️', bg: '#f3e8ff' },
+      urgency: { name: 'Urgency & Scarcity', icon: '⏰', bg: '#fee2e2' },
+      anxiety: { name: 'Anxiety Reducers', icon: '🛡️', bg: '#d1fae5' },
+      socialProof: { name: 'Social Proof', icon: '👥', bg: '#ede9fe' },
+      cta: { name: 'Call-to-Action', icon: '🎯', bg: '#fce7f3' },
+      friction: { name: 'Friction Analysis', icon: '⚡', bg: '#e0e7ff' },
+      persuasion: { name: 'Persuasion Elements', icon: '🧠', bg: '#f3e8ff' },
     };
 
     let analysisData = null;
 
-    // Analysis Functions
-    function analyzeHeadline(doc) {
-      const score = { points: 0, max: 15, findings: [], recommendations: [] };
+    // ============================================
+    // HELPER FUNCTIONS
+    // ============================================
+    function getTextContent(doc) {
+      return doc.body ? doc.body.textContent.toLowerCase() : '';
+    }
+
+    function getHeroSection(doc) {
+      const selectors = [
+        '[class*="hero"]', '[class*="banner"]', '[class*="jumbotron"]',
+        '[class*="masthead"]', '[class*="header"]', '[class*="above-fold"]',
+        'header', 'main > section:first-child', 'section:first-of-type'
+      ];
+      for (const sel of selectors) {
+        const el = doc.querySelector(sel);
+        if (el) return el;
+      }
+      return doc.body;
+    }
+
+    function countMatches(text, patterns) {
+      return patterns.filter(p => text.includes(p.toLowerCase())).length;
+    }
+
+    // ============================================
+    // 1. CLARITY ANALYSIS (LIFT Model)
+    // Is the message clear and easy to understand?
+    // ============================================
+    function analyzeClarity(doc) {
+      const score = { points: 0, max: 20, findings: [], recommendations: [] };
+      const hero = getHeroSection(doc);
+      const heroText = hero ? hero.textContent : '';
       const h1 = doc.querySelector('h1');
       const h1Text = h1 ? h1.textContent.trim() : '';
+      const h2s = doc.querySelectorAll('h2');
 
+      // H1 Headline Presence & Quality
       if (!h1) {
-        score.findings.push('❌ No H1 headline found');
-        score.recommendations.push('Add a clear, benefit-driven H1 headline above the fold');
+        score.findings.push('❌ No H1 headline found - visitors won\'t know what this page is about');
+        score.recommendations.push('Add a clear H1 headline that explains what you offer in 10 words or less');
       } else {
-        score.points += 5;
-        score.findings.push('✓ H1 headline present');
+        score.points += 4;
+        const wordCount = h1Text.split(/\s+/).filter(w => w).length;
 
-        const wordCount = h1Text.split(/\s+/).length;
-        if (wordCount >= 4 && wordCount <= 15) {
+        if (wordCount <= 10) {
           score.points += 3;
-          score.findings.push('✓ Headline length is optimal');
-        } else if (wordCount < 4) {
-          score.findings.push('⚠️ Headline may be too short');
-          score.recommendations.push('Consider expanding headline to communicate more value');
+          score.findings.push('✓ Headline is concise and scannable');
+        } else if (wordCount <= 15) {
+          score.points += 1;
+          score.findings.push('⚠️ Headline is slightly long (' + wordCount + ' words)');
+          score.recommendations.push('Shorten headline to 10 words or less for better clarity');
         } else {
-          score.findings.push('⚠️ Headline may be too long');
-          score.recommendations.push('Consider shortening headline for better scannability');
+          score.findings.push('❌ Headline is too long (' + wordCount + ' words) - hard to scan');
+          score.recommendations.push('Rewrite headline to be under 10 words - clarity beats cleverness');
         }
 
-        const powerWords = ['free', 'new', 'proven', 'guaranteed', 'instant', 'easy', 'discover', 'secret', 'exclusive', 'limited', 'save', 'results', 'fast', 'simple', 'powerful'];
-        const hasPowerWord = powerWords.some(word => h1Text.toLowerCase().includes(word));
-        if (hasPowerWord) {
-          score.points += 4;
-          score.findings.push('✓ Headline contains power words');
+        // Check for jargon-free language
+        const jargonWords = ['synergy', 'leverage', 'paradigm', 'holistic', 'ecosystem', 'disrupt', 'innovative', 'revolutionary', 'cutting-edge', 'next-gen', 'best-in-class'];
+        const hasJargon = jargonWords.some(j => h1Text.toLowerCase().includes(j));
+        if (hasJargon) {
+          score.findings.push('⚠️ Headline contains buzzwords/jargon');
+          score.recommendations.push('Replace buzzwords with specific, concrete language your customers use');
         } else {
-          score.recommendations.push('Consider adding power words to make headline more compelling');
+          score.points += 2;
         }
+      }
 
-        if (/\d/.test(h1Text)) {
-          score.points += 3;
-          score.findings.push('✓ Headline contains specific numbers (builds credibility)');
-        }
+      // Subheadline Support
+      if (h2s.length > 0) {
+        score.points += 3;
+        score.findings.push('✓ Supporting subheadlines provide additional context');
+      } else {
+        score.recommendations.push('Add a subheadline to expand on your main message');
+      }
+
+      // Visual Hierarchy Check
+      const hasImages = doc.querySelectorAll('img, picture, svg').length > 0;
+      const hasVideo = doc.querySelectorAll('video, iframe[src*="youtube"], iframe[src*="vimeo"], iframe[src*="wistia"]').length > 0;
+
+      if (hasVideo) {
+        score.points += 4;
+        score.findings.push('✓ Video content present - can increase understanding by 74%');
+      } else if (hasImages) {
+        score.points += 2;
+        score.findings.push('✓ Visual content supports the message');
+      } else {
+        score.recommendations.push('Add images or video to visually explain your offer');
+      }
+
+      // Check for "What, Who, Why" framework
+      const hasWhat = /what (you|we|is|are)|how (it|to) works/i.test(heroText);
+      const hasWho = /for (you|teams|businesses|developers|marketers|creators)/i.test(heroText);
+
+      if (hasWhat) {
+        score.points += 2;
+        score.findings.push('✓ Page explains what the product/service does');
+      } else {
+        score.recommendations.push('Clearly explain WHAT you do within the first viewport');
       }
 
       return score;
     }
 
+    // ============================================
+    // 2. VALUE PROPOSITION ANALYSIS
+    // Is the unique value clear and compelling?
+    // ============================================
+    function analyzeValueProposition(doc) {
+      const score = { points: 0, max: 20, findings: [], recommendations: [] };
+      const hero = getHeroSection(doc);
+      const heroText = hero ? hero.textContent.toLowerCase() : '';
+      const bodyText = getTextContent(doc);
+
+      // Benefit-focused language (not feature-focused)
+      const benefitWords = [
+        'save', 'increase', 'improve', 'boost', 'reduce', 'eliminate', 'grow',
+        'maximize', 'achieve', 'gain', 'get more', 'spend less', 'faster',
+        'easier', 'without', 'never again', 'finally', 'stop', 'transform'
+      ];
+      const featureWords = [
+        'features', 'functionality', 'capabilities', 'specifications', 'technical',
+        'integrates with', 'built with', 'powered by', 'includes'
+      ];
+
+      const benefitCount = countMatches(heroText, benefitWords);
+      const featureCount = countMatches(heroText, featureWords);
+
+      if (benefitCount >= 3) {
+        score.points += 5;
+        score.findings.push('✓ Strong benefit-oriented messaging');
+      } else if (benefitCount >= 1) {
+        score.points += 2;
+        score.findings.push('⚠️ Some benefit language, but could be stronger');
+        score.recommendations.push('Lead with benefits: "Save 10 hours/week" beats "Automated scheduling feature"');
+      } else {
+        score.findings.push('❌ Missing benefit-focused language');
+        score.recommendations.push('Reframe features as benefits - focus on the outcome, not the tool');
+      }
+
+      // Unique differentiators
+      const diffWords = ['only', 'first', 'unique', '#1', 'best', 'leading', 'unlike', 'different', 'exclusive', 'proprietary'];
+      const hasDifferentiator = countMatches(heroText, diffWords) > 0;
+
+      if (hasDifferentiator) {
+        score.points += 4;
+        score.findings.push('✓ Unique differentiator claims present');
+      } else {
+        score.recommendations.push('Add what makes you different - why should they choose you over competitors?');
+      }
+
+      // Specificity in claims
+      const hasSpecificNumbers = /\d+%|\d+x|\d+\s*(hours?|minutes?|days?|times?|users?|customers?|companies)/i.test(heroText);
+      if (hasSpecificNumbers) {
+        score.points += 4;
+        score.findings.push('✓ Specific, quantified claims build credibility');
+      } else {
+        score.recommendations.push('Add specific numbers: "Save 5 hours/week" is more believable than "Save time"');
+      }
+
+      // Target audience clarity
+      const audienceIndicators = ['for teams', 'for businesses', 'for developers', 'for marketers', 'for creators', 'for agencies', 'for startups', 'for enterprise', 'for you'];
+      const hasAudience = audienceIndicators.some(a => heroText.includes(a));
+
+      if (hasAudience) {
+        score.points += 3;
+        score.findings.push('✓ Target audience is clearly identified');
+      } else {
+        score.recommendations.push('Specify WHO this is for - visitors should immediately know if it\'s for them');
+      }
+
+      // Problem/Solution framing
+      const problemWords = ['tired of', 'frustrated', 'struggle', 'problem', 'challenge', 'pain', 'difficult', 'hard to', 'waste', 'losing'];
+      const hasProblem = countMatches(bodyText, problemWords) > 0;
+
+      if (hasProblem) {
+        score.points += 4;
+        score.findings.push('✓ Problem-aware messaging resonates with visitor pain points');
+      } else {
+        score.recommendations.push('Acknowledge the problem before presenting your solution - show you understand their pain');
+      }
+
+      return score;
+    }
+
+    // ============================================
+    // 3. URGENCY & SCARCITY (Cialdini)
+    // Is there a reason to act NOW?
+    // ============================================
+    function analyzeUrgency(doc) {
+      const score = { points: 0, max: 15, findings: [], recommendations: [] };
+      const bodyText = getTextContent(doc);
+      const html = doc.documentElement.innerHTML.toLowerCase();
+
+      // Time-based urgency
+      const timeUrgency = ['limited time', 'offer ends', 'expires', 'deadline', 'last chance', 'ending soon', 'today only', 'act now', 'don\'t miss', 'hurry'];
+      const hasTimeUrgency = countMatches(bodyText, timeUrgency) > 0;
+
+      if (hasTimeUrgency) {
+        score.points += 5;
+        score.findings.push('✓ Time-based urgency creates reason to act now');
+      }
+
+      // Scarcity indicators
+      const scarcityWords = ['only \\d+', 'limited', 'few remaining', 'almost gone', 'selling fast', 'spots left', 'seats available', 'exclusive', 'while supplies'];
+      const hasScarcity = scarcityWords.some(s => new RegExp(s, 'i').test(bodyText));
+
+      if (hasScarcity) {
+        score.points += 5;
+        score.findings.push('✓ Scarcity messaging present');
+      }
+
+      // Countdown timers or dynamic urgency
+      const hasCountdown = /countdown|timer|clock/i.test(html) || doc.querySelectorAll('[class*="countdown"], [class*="timer"]').length > 0;
+      if (hasCountdown) {
+        score.points += 3;
+        score.findings.push('✓ Countdown timer adds visual urgency');
+      }
+
+      // Incentive for immediate action
+      const incentiveWords = ['bonus', 'free', 'discount', 'save', '% off', 'deal', 'special offer', 'gift', 'extra'];
+      const hasIncentive = countMatches(bodyText, incentiveWords) > 0;
+
+      if (hasIncentive) {
+        score.points += 2;
+        score.findings.push('✓ Incentives encourage immediate action');
+      }
+
+      // Recommendations based on what's missing
+      if (!hasTimeUrgency && !hasScarcity && !hasCountdown) {
+        score.findings.push('⚠️ No urgency elements detected');
+        score.recommendations.push('Add a reason to act NOW - limited time offer, bonus for early action, or limited spots');
+        score.recommendations.push('Ethical urgency: "Join 500 others who signed up this week" or "Price increases Jan 1st"');
+      }
+
+      return score;
+    }
+
+    // ============================================
+    // 4. ANXIETY REDUCERS (LIFT Model)
+    // What might prevent conversion? Address fears.
+    // ============================================
+    function analyzeAnxiety(doc) {
+      const score = { points: 0, max: 20, findings: [], recommendations: [] };
+      const bodyText = getTextContent(doc);
+      const html = doc.documentElement.innerHTML.toLowerCase();
+
+      // Money-back guarantee
+      const hasGuarantee = /guarantee|money.?back|refund|risk.?free|no.?risk/i.test(bodyText);
+      if (hasGuarantee) {
+        score.points += 4;
+        score.findings.push('✓ Guarantee/refund policy reduces purchase anxiety');
+      } else {
+        score.recommendations.push('Add a money-back guarantee or risk-free trial to reduce anxiety');
+      }
+
+      // Free trial
+      const hasFreeTrial = /free trial|try free|start free|no credit card|no commitment/i.test(bodyText);
+      if (hasFreeTrial) {
+        score.points += 4;
+        score.findings.push('✓ Free trial lowers barrier to entry');
+      }
+
+      // Security indicators
+      const securityWords = ['secure', 'ssl', 'encrypted', 'privacy', 'gdpr', 'protected', 'safe'];
+      const hasSecurityBadges = doc.querySelectorAll('img[src*="secure"], img[src*="ssl"], img[src*="trust"], img[alt*="secure"], [class*="secure"], [class*="trust-badge"]').length > 0;
+      const hasSecurityText = countMatches(bodyText, securityWords) > 0;
+
+      if (hasSecurityBadges || hasSecurityText) {
+        score.points += 3;
+        score.findings.push('✓ Security/privacy assurances present');
+      } else {
+        score.recommendations.push('Add security badges and privacy assurances near forms and CTAs');
+      }
+
+      // Contact/support availability
+      const hasContact = /contact|support|help|chat|call us|email us|phone/i.test(bodyText);
+      const hasLiveChat = /live chat|chat with|intercom|drift|crisp|zendesk/i.test(html);
+
+      if (hasLiveChat) {
+        score.points += 3;
+        score.findings.push('✓ Live chat support available');
+      } else if (hasContact) {
+        score.points += 2;
+        score.findings.push('✓ Contact information available');
+      } else {
+        score.recommendations.push('Add visible contact options - phone, chat, or email - to build trust');
+      }
+
+      // FAQ section
+      const hasFAQ = /faq|frequently asked|common questions/i.test(bodyText) || doc.querySelectorAll('[class*="faq"], [class*="accordion"]').length > 0;
+      if (hasFAQ) {
+        score.points += 3;
+        score.findings.push('✓ FAQ section addresses common concerns');
+      } else {
+        score.recommendations.push('Add an FAQ section to proactively address objections');
+      }
+
+      // Clear pricing (if applicable)
+      const hasPricing = /pricing|\$\d|price|cost|free|per month|\/mo|\/year/i.test(bodyText);
+      if (hasPricing) {
+        score.points += 3;
+        score.findings.push('✓ Pricing information is transparent');
+      }
+
+      return score;
+    }
+
+    // ============================================
+    // 5. SOCIAL PROOF (Cialdini)
+    // Do others trust/use this?
+    // ============================================
+    function analyzeSocialProof(doc) {
+      const score = { points: 0, max: 20, findings: [], recommendations: [] };
+      const bodyText = getTextContent(doc);
+      const html = doc.documentElement.innerHTML.toLowerCase();
+
+      // Testimonials with names/photos
+      const testimonialSelectors = '[class*="testimonial"], [class*="review"], [class*="quote"], blockquote, [class*="customer-story"]';
+      const testimonials = doc.querySelectorAll(testimonialSelectors);
+
+      if (testimonials.length >= 3) {
+        score.points += 5;
+        score.findings.push('✓ Multiple testimonials build strong social proof');
+      } else if (testimonials.length > 0) {
+        score.points += 3;
+        score.findings.push('⚠️ Testimonials present, but more would strengthen credibility');
+        score.recommendations.push('Add at least 3 testimonials with real names, photos, and specific results');
+      } else {
+        score.findings.push('❌ No testimonials detected');
+        score.recommendations.push('Add customer testimonials - they\'re one of the highest-impact trust elements');
+      }
+
+      // Customer logos / "As seen in"
+      const logoIndicators = /trusted by|used by|featured in|as seen|our customers|clients include|companies using/i.test(bodyText);
+      const hasLogoSection = doc.querySelectorAll('[class*="logo"], [class*="client"], [class*="partner"], [class*="brand"]').length >= 3;
+
+      if (logoIndicators || hasLogoSection) {
+        score.points += 4;
+        score.findings.push('✓ Client logos / "trusted by" section builds authority');
+      } else {
+        score.recommendations.push('Add recognizable client logos or "As Seen In" media mentions');
+      }
+
+      // Statistics / User count
+      const statsPattern = /(\d{1,3}(,\d{3})*|\d+[kKmM])\+?\s*(users?|customers?|companies|businesses|downloads|reviews|ratings|clients)/i;
+      const hasStats = statsPattern.test(bodyText);
+
+      if (hasStats) {
+        score.points += 4;
+        score.findings.push('✓ User/customer statistics quantify social proof');
+      } else {
+        score.recommendations.push('Add user count or customer statistics: "Join 10,000+ teams..."');
+      }
+
+      // Star ratings
+      const hasRatings = /\d(\.\d)?\s*(stars?|\/\s*5|out of 5)/i.test(bodyText) || doc.querySelectorAll('[class*="star"], [class*="rating"]').length > 0;
+      if (hasRatings) {
+        score.points += 3;
+        score.findings.push('✓ Star ratings provide quick trust signals');
+      }
+
+      // Third-party reviews (G2, Capterra, Trustpilot, etc.)
+      const thirdPartyReviews = /g2|capterra|trustpilot|producthunt|getapp|software advice/i.test(html);
+      if (thirdPartyReviews) {
+        score.points += 4;
+        score.findings.push('✓ Third-party review platform badges add credibility');
+      } else {
+        score.recommendations.push('Consider adding badges from G2, Capterra, or Trustpilot if you have good reviews');
+      }
+
+      return score;
+    }
+
+    // ============================================
+    // 6. CALL-TO-ACTION ANALYSIS
+    // Is the CTA clear, compelling, and prominent?
+    // ============================================
     function analyzeCTA(doc) {
       const score = { points: 0, max: 20, findings: [], recommendations: [] };
-      const buttons = doc.querySelectorAll('button, a.btn, a.button, .cta, [class*="cta"], input[type="submit"], a[class*="button"]');
-      const ctaPatterns = /get started|sign up|buy now|start|try|download|claim|grab|join|subscribe|register|book|schedule|learn more|get|start free|begin/i;
 
-      let ctaElements = [];
-      buttons.forEach(el => {
-        const text = el.textContent.trim();
-        if (text && ctaPatterns.test(text)) {
-          ctaElements.push(text);
+      // Find all CTA-like elements
+      const ctaSelectors = 'button, a[class*="btn"], a[class*="button"], a[class*="cta"], [class*="cta"], input[type="submit"]';
+      const allCTAs = doc.querySelectorAll(ctaSelectors);
+
+      // Filter to actual CTAs with text
+      let ctaTexts = [];
+      allCTAs.forEach(el => {
+        const text = (el.textContent || el.value || '').trim().toLowerCase();
+        if (text && text.length > 1 && text.length < 50) {
+          ctaTexts.push(text);
         }
       });
 
-      if (ctaElements.length === 0) {
-        doc.querySelectorAll('button, input[type="submit"]').forEach(el => {
-          const text = el.textContent.trim() || el.value || '';
-          if (text) ctaElements.push(text);
-        });
-      }
-
-      if (ctaElements.length === 0) {
+      if (ctaTexts.length === 0) {
         score.findings.push('❌ No clear CTA buttons found');
-        score.recommendations.push('Add prominent call-to-action buttons with action-oriented text');
-      } else {
-        score.points += 8;
-        score.findings.push(`✓ Found ${ctaElements.length} CTA element(s)`);
-
-        const hasActionWords = ctaElements.some(text =>
-          /^(get|start|try|download|claim|grab|join|subscribe|register|book|schedule|buy|shop|order)/i.test(text.trim())
-        );
-
-        if (hasActionWords) {
-          score.points += 6;
-          score.findings.push('✓ CTAs use action-oriented language');
-        } else {
-          score.recommendations.push('Start CTA text with action verbs (Get, Start, Try, Claim)');
-        }
-
-        const hasBenefit = ctaElements.some(text =>
-          /free|instant|now|today|save|discount/i.test(text)
-        );
-        if (hasBenefit) {
-          score.points += 6;
-          score.findings.push('✓ CTAs communicate benefits or urgency');
-        } else {
-          score.recommendations.push('Add benefit language to CTAs (e.g., "Start Free Trial" vs "Submit")');
-        }
-      }
-
-      return score;
-    }
-
-    function analyzeTrustSignals(doc) {
-      const score = { points: 0, max: 15, findings: [], recommendations: [] };
-      const html = doc.documentElement.innerHTML.toLowerCase();
-      const text = doc.body.textContent.toLowerCase();
-
-      const hasTestimonials =
-        doc.querySelectorAll('[class*="testimonial"], [class*="review"], [class*="quote"], blockquote').length > 0 ||
-        /testimonial|customer review/i.test(html);
-
-      if (hasTestimonials) {
-        score.points += 4;
-        score.findings.push('✓ Testimonials or reviews detected');
-      } else {
-        score.recommendations.push('Add customer testimonials to build trust');
-      }
-
-      const hasTrustBadges =
-        doc.querySelectorAll('img[src*="badge"], img[src*="trust"], img[src*="secure"], img[alt*="secure"], img[alt*="certified"]').length > 0 ||
-        doc.querySelectorAll('[class*="trust"], [class*="badge"], [class*="secure"]').length > 0;
-
-      if (hasTrustBadges) {
-        score.points += 3;
-        score.findings.push('✓ Trust badges detected');
-      } else {
-        score.recommendations.push('Add trust badges (security seals, certifications, awards)');
-      }
-
-      const hasClientLogos =
-        doc.querySelectorAll('[class*="logo"], [class*="client"], [class*="partner"], [class*="featured"]').length >= 3 ||
-        /as seen|featured in|trusted by|used by/i.test(text);
-
-      if (hasClientLogos) {
-        score.points += 4;
-        score.findings.push('✓ Client logos or "as seen in" section detected');
-      } else {
-        score.recommendations.push('Add client logos or "As Seen In" section for social proof');
-      }
-
-      const hasStats = /\d+[,.]?\d*\s*(\+|%|k|m|million|thousand|customers|users|clients|downloads|reviews)/i.test(text);
-      if (hasStats) {
-        score.points += 4;
-        score.findings.push('✓ Specific statistics/metrics found');
-      } else {
-        score.recommendations.push('Add specific numbers (e.g., "10,000+ customers", "99% satisfaction")');
-      }
-
-      return score;
-    }
-
-    function analyzeValueProposition(doc) {
-      const score = { points: 0, max: 15, findings: [], recommendations: [] };
-      const heroArea = doc.querySelector('header, [class*="hero"], [class*="banner"], section');
-      const heroText = heroArea ? heroArea.textContent.toLowerCase() : '';
-      const bodyText = doc.body.textContent.toLowerCase();
-
-      const benefitWords = ['save', 'increase', 'improve', 'boost', 'reduce', 'eliminate', 'transform', 'grow', 'maximize', 'achieve', 'get', 'gain'];
-      const hasBenefits = benefitWords.some(word => heroText.includes(word));
-
-      if (hasBenefits) {
-        score.points += 5;
-        score.findings.push('✓ Benefit-oriented language in hero section');
-      } else {
-        score.recommendations.push('Lead with benefits, not features - what does the customer gain?');
-      }
-
-      const uspIndicators = ['only', 'first', 'unique', 'exclusive', 'unlike', 'different', '#1', 'best', 'leading'];
-      const hasUSP = uspIndicators.some(word => heroText.includes(word));
-
-      if (hasUSP) {
-        score.points += 5;
-        score.findings.push('✓ Unique selling proposition indicators found');
-      } else {
-        score.recommendations.push('Clarify what makes you different from competitors');
-      }
-
-      const h2 = doc.querySelector('h2');
-      if (h2) {
-        score.points += 5;
-        score.findings.push('✓ Supporting subheadline present');
-      } else {
-        score.recommendations.push('Add a subheadline to expand on your main value proposition');
-      }
-
-      return score;
-    }
-
-    function analyzeForm(doc) {
-      const score = { points: 0, max: 10, findings: [], recommendations: [] };
-      const forms = doc.querySelectorAll('form');
-
-      if (forms.length === 0) {
-        score.findings.push('ℹ️ No forms detected (may be intentional for some page types)');
-        score.points += 5;
+        score.recommendations.push('Add prominent call-to-action buttons above the fold');
         return score;
       }
 
-      score.findings.push(`✓ ${forms.length} form(s) found`);
+      score.points += 4;
+      score.findings.push(`✓ Found ${ctaTexts.length} CTA element(s)`);
 
+      // Action-oriented language (starts with verb)
+      const actionVerbs = ['get', 'start', 'try', 'download', 'claim', 'grab', 'join', 'subscribe', 'register', 'book', 'schedule', 'buy', 'shop', 'order', 'create', 'build', 'discover', 'learn', 'see', 'watch', 'read', 'access', 'unlock'];
+      const hasActionCTA = ctaTexts.some(text => actionVerbs.some(verb => text.startsWith(verb)));
+
+      if (hasActionCTA) {
+        score.points += 4;
+        score.findings.push('✓ CTAs use action-oriented verbs');
+      } else {
+        score.recommendations.push('Start CTA with action verb: "Get Started" beats "Submit"');
+      }
+
+      // Value-focused CTA (mentions benefit)
+      const valueCTAs = ctaTexts.filter(text =>
+        /free|instant|now|today|save|your|my|access|unlock/i.test(text)
+      );
+
+      if (valueCTAs.length > 0) {
+        score.points += 4;
+        score.findings.push('✓ CTAs communicate value or ownership');
+      } else {
+        score.recommendations.push('Make CTAs benefit-focused: "Start My Free Trial" > "Sign Up"');
+      }
+
+      // Check for weak/generic CTAs
+      const weakCTAs = ['submit', 'click here', 'learn more', 'read more', 'continue', 'next'];
+      const hasWeakCTA = ctaTexts.some(text => weakCTAs.includes(text));
+
+      if (hasWeakCTA) {
+        score.findings.push('⚠️ Some CTAs use weak/generic text');
+        score.recommendations.push('Replace "Submit" with specific action: "Get My Report" or "Start Creating"');
+      } else {
+        score.points += 3;
+      }
+
+      // Primary CTA visibility (in hero)
+      const hero = getHeroSection(doc);
+      const heroCTAs = hero ? hero.querySelectorAll(ctaSelectors) : [];
+
+      if (heroCTAs.length > 0) {
+        score.points += 3;
+        score.findings.push('✓ CTA visible above the fold');
+      } else {
+        score.recommendations.push('Ensure your primary CTA is visible without scrolling');
+      }
+
+      // Multiple CTAs throughout page
+      if (ctaTexts.length >= 3) {
+        score.points += 2;
+        score.findings.push('✓ Multiple CTAs throughout the page');
+      } else {
+        score.recommendations.push('Add CTAs after each major section - don\'t make users scroll to convert');
+      }
+
+      return score;
+    }
+
+    // ============================================
+    // 7. FRICTION ANALYSIS (Fogg Behavior Model)
+    // How easy is it to convert?
+    // ============================================
+    function analyzeFriction(doc) {
+      const score = { points: 0, max: 15, findings: [], recommendations: [] };
+
+      // Form analysis
+      const forms = doc.querySelectorAll('form');
+
+      if (forms.length === 0) {
+        score.points += 5;
+        score.findings.push('ℹ️ No forms detected - may be a content page');
+
+        // Check if there's at least a link to sign up/contact
+        const hasConversionPath = doc.querySelectorAll('a[href*="signup"], a[href*="register"], a[href*="contact"], a[href*="demo"], a[href*="trial"]').length > 0;
+        if (hasConversionPath) {
+          score.points += 3;
+          score.findings.push('✓ Clear path to conversion exists');
+        }
+
+        return score;
+      }
+
+      // Analyze main form
       const mainForm = forms[0];
       const inputs = mainForm.querySelectorAll('input:not([type="hidden"]):not([type="submit"]):not([type="button"]), select, textarea');
       const inputCount = inputs.length;
 
-      if (inputCount <= 3) {
-        score.points += 5;
-        score.findings.push(`✓ Form has ${inputCount} fields (low friction)`);
-      } else if (inputCount <= 5) {
-        score.points += 3;
-        score.findings.push(`⚠️ Form has ${inputCount} fields (moderate friction)`);
-        score.recommendations.push('Consider reducing form fields - each field reduces conversions by ~7%');
-      } else {
-        score.findings.push(`❌ Form has ${inputCount} fields (high friction)`);
-        score.recommendations.push('Reduce form fields to essential information only');
-      }
-
-      const hasValidation = mainForm.querySelectorAll('[required], [pattern], [class*="valid"]').length > 0;
-      if (hasValidation) {
-        score.points += 3;
-        score.findings.push('✓ Form validation detected');
-      }
-
-      const labels = mainForm.querySelectorAll('label');
-      if (labels.length >= inputCount * 0.5) {
+      // Field count impact
+      if (inputCount <= 2) {
+        score.points += 6;
+        score.findings.push(`✓ Minimal form friction (${inputCount} fields) - each field removed can boost conversions 10%+`);
+      } else if (inputCount <= 4) {
+        score.points += 4;
+        score.findings.push(`⚠️ Form has ${inputCount} fields - consider if all are essential`);
+        score.recommendations.push('Test removing non-essential fields - name might not be needed for email signup');
+      } else if (inputCount <= 6) {
         score.points += 2;
-        score.findings.push('✓ Form fields have labels');
+        score.findings.push(`⚠️ Form has ${inputCount} fields - high friction`);
+        score.recommendations.push('Long forms kill conversions. Ask only what\'s absolutely necessary.');
       } else {
-        score.recommendations.push('Add clear labels to all form fields');
+        score.findings.push(`❌ Form has ${inputCount} fields - very high friction`);
+        score.recommendations.push('Consider multi-step forms or reducing to essential fields only');
+      }
+
+      // Check for email-only option
+      const emailOnly = inputCount === 1 && mainForm.querySelector('input[type="email"]');
+      if (emailOnly) {
+        score.points += 3;
+        score.findings.push('✓ Email-only signup minimizes friction');
+      }
+
+      // Password requirements visibility
+      const passwordField = mainForm.querySelector('input[type="password"]');
+      if (passwordField) {
+        score.recommendations.push('If password is required, show requirements upfront to prevent frustration');
+      }
+
+      // Social login options
+      const socialLogin = /google|facebook|apple|github|linkedin|twitter|sso|oauth/i.test(doc.documentElement.innerHTML);
+      if (socialLogin) {
+        score.points += 3;
+        score.findings.push('✓ Social/SSO login option reduces signup friction');
+      } else if (forms.length > 0) {
+        score.recommendations.push('Consider adding "Sign up with Google" to reduce friction');
+      }
+
+      // Required field indicators
+      const requiredFields = mainForm.querySelectorAll('[required]');
+      if (requiredFields.length > 0 && requiredFields.length < inputCount) {
+        score.points += 1;
+        score.findings.push('✓ Required fields are marked');
+      }
+
+      // Inline validation
+      const hasInlineValidation = mainForm.querySelector('[pattern], [class*="valid"], [class*="error"]');
+      if (hasInlineValidation) {
+        score.points += 2;
+        score.findings.push('✓ Form validation helps users complete fields correctly');
       }
 
       return score;
     }
 
-    function analyzeMobileOptimization(doc) {
-      const score = { points: 0, max: 10, findings: [], recommendations: [] };
-      const html = doc.documentElement.innerHTML;
+    // ============================================
+    // 8. PERSUASION ELEMENTS (Advanced)
+    // Psychological triggers and persuasion techniques
+    // ============================================
+    function analyzePersuasion(doc) {
+      const score = { points: 0, max: 20, findings: [], recommendations: [] };
+      const bodyText = getTextContent(doc);
+      const html = doc.documentElement.innerHTML.toLowerCase();
 
-      const hasViewport = doc.querySelector('meta[name="viewport"]') !== null;
-      if (hasViewport) {
+      // Power words in copy
+      const powerWords = [
+        'free', 'new', 'proven', 'guaranteed', 'instant', 'easy', 'secret',
+        'exclusive', 'limited', 'save', 'results', 'fast', 'simple', 'powerful',
+        'amazing', 'discover', 'unlock', 'transform', 'boost', 'premium',
+        'ultimate', 'complete', 'essential', 'breakthrough', 'revolutionary'
+      ];
+      const powerWordCount = countMatches(bodyText, powerWords);
+
+      if (powerWordCount >= 5) {
         score.points += 4;
-        score.findings.push('✓ Viewport meta tag present');
-      } else {
-        score.findings.push('❌ No viewport meta tag found');
-        score.recommendations.push('Add viewport meta tag for mobile responsiveness');
-      }
-
-      const hasMediaQueries = /@media/i.test(html);
-      const hasResponsiveClasses = /col-|flex|grid|responsive|mobile|sm:|md:|lg:/i.test(html);
-
-      if (hasMediaQueries || hasResponsiveClasses) {
-        score.points += 4;
-        score.findings.push('✓ Responsive design patterns detected');
-      } else {
-        score.recommendations.push('Ensure responsive design for mobile users');
-      }
-
-      const hasTouchFriendly = doc.querySelectorAll('button, a.btn, [class*="button"]').length > 0;
-      if (hasTouchFriendly) {
+        score.findings.push('✓ Copy uses persuasive power words effectively');
+      } else if (powerWordCount >= 2) {
         score.points += 2;
-        score.findings.push('✓ Touch-friendly button elements found');
+        score.findings.push('⚠️ Some power words, but copy could be more compelling');
+        score.recommendations.push('Incorporate more power words: free, proven, instant, exclusive, guaranteed');
+      } else {
+        score.recommendations.push('Add power words to make copy more compelling and action-oriented');
       }
 
-      return score;
-    }
+      // Loss aversion framing
+      const lossAversion = /don't miss|missing out|lose|losing|without|never|stop wasting|tired of/i.test(bodyText);
+      if (lossAversion) {
+        score.points += 3;
+        score.findings.push('✓ Loss aversion language taps into fear of missing out');
+      }
 
-    function analyzePageStructure(doc) {
-      const score = { points: 0, max: 15, findings: [], recommendations: [] };
-
-      const h1Count = doc.querySelectorAll('h1').length;
-      const h2Count = doc.querySelectorAll('h2').length;
-
-      if (h1Count === 1) {
+      // Reciprocity (giving free value)
+      const reciprocity = /free (guide|ebook|template|resource|tool|trial|demo|consultation|download|report|checklist)/i.test(bodyText);
+      if (reciprocity) {
         score.points += 4;
-        score.findings.push('✓ Single H1 tag (good for SEO and clarity)');
-      } else if (h1Count === 0) {
-        score.findings.push('❌ No H1 tag found');
-        score.recommendations.push('Add exactly one H1 tag for your main headline');
+        score.findings.push('✓ Free value offer triggers reciprocity principle');
       } else {
-        score.findings.push('⚠️ Multiple H1 tags found');
-        score.recommendations.push('Use only one H1 tag per page');
+        score.recommendations.push('Offer something free (guide, tool, trial) to trigger reciprocity');
       }
 
-      if (h2Count >= 2) {
-        score.points += 3;
-        score.findings.push('✓ Multiple H2 sections for content organization');
-      }
+      // Authority indicators
+      const authorityWords = ['expert', 'award', 'certified', 'recognized', 'featured', 'published', 'years of experience', 'industry leader', 'official', 'accredited'];
+      const hasAuthority = countMatches(bodyText, authorityWords) > 0;
 
-      const images = doc.querySelectorAll('img');
-      if (images.length > 0) {
+      if (hasAuthority) {
         score.points += 3;
-        score.findings.push(`✓ ${images.length} image(s) found`);
-
-        const imagesWithAlt = Array.from(images).filter(img => img.alt);
-        if (imagesWithAlt.length === images.length) {
-          score.points += 2;
-          score.findings.push('✓ All images have alt attributes');
-        } else {
-          score.recommendations.push('Add alt attributes to all images for accessibility');
-        }
+        score.findings.push('✓ Authority signals establish credibility');
       } else {
-        score.recommendations.push('Consider adding relevant images to increase engagement');
+        score.recommendations.push('Add authority indicators: certifications, awards, media mentions, expert credentials');
       }
 
-      const hasVideo = doc.querySelectorAll('video, iframe[src*="youtube"], iframe[src*="vimeo"], [class*="video"]').length > 0;
-      if (hasVideo) {
+      // Anchoring (price comparison)
+      const hasAnchoring = /was \$|originally|compare|save \$|value:?\s*\$/i.test(bodyText);
+      if (hasAnchoring) {
         score.points += 3;
-        score.findings.push('✓ Video content detected (can increase conversions 80%+)');
+        score.findings.push('✓ Price anchoring makes offer seem more valuable');
+      }
+
+      // Community/belonging language
+      const community = /join|community|tribe|family|network|thousands of|team of/i.test(bodyText);
+      if (community) {
+        score.points += 3;
+        score.findings.push('✓ Community language creates sense of belonging');
+      } else {
+        score.recommendations.push('Add community language: "Join 10,000+ marketers..." creates belonging');
       }
 
       return score;
@@ -1174,15 +1486,16 @@
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
 
-        // Run analyses
+        // Run CRO Framework analyses
         const analyses = {
-          headline: analyzeHeadline(doc),
-          cta: analyzeCTA(doc),
-          trustSignals: analyzeTrustSignals(doc),
+          clarity: analyzeClarity(doc),
           valueProposition: analyzeValueProposition(doc),
-          form: analyzeForm(doc),
-          mobile: analyzeMobileOptimization(doc),
-          pageStructure: analyzePageStructure(doc),
+          urgency: analyzeUrgency(doc),
+          anxiety: analyzeAnxiety(doc),
+          socialProof: analyzeSocialProof(doc),
+          cta: analyzeCTA(doc),
+          friction: analyzeFriction(doc),
+          persuasion: analyzePersuasion(doc),
         };
 
         // Calculate total score
