@@ -2,21 +2,15 @@
 
 A free CRO tool that analyzes landing pages and provides actionable conversion optimization recommendations.
 
+**[Live Demo](https://jonomtla.github.io/effective-tribble/)**
+
 ## Features
 
 - **Instant Analysis**: Enter any URL and get a comprehensive CRO score
 - **7 Key Categories**: Headline, CTA, Trust Signals, Value Proposition, Forms, Mobile, Page Structure
 - **Actionable Recommendations**: Prioritized list of improvements
-- **Lead Capture**: Built-in email gate for full report (great lead magnet!)
-
-## Quick Start
-
-```bash
-npm install
-npm start
-```
-
-Then open http://localhost:3000
+- **Lead Capture**: Built-in email capture for full report
+- **No Backend Required**: Runs entirely in the browser via GitHub Pages
 
 ## What It Analyzes
 
@@ -30,15 +24,21 @@ Then open http://localhost:3000
 | Mobile | Viewport meta, responsive patterns, touch-friendly elements |
 | Page Structure | Heading hierarchy, images, alt tags, video content |
 
+## Deploy to GitHub Pages
+
+1. Go to your repo **Settings** → **Pages**
+2. Under "Source", select **Deploy from a branch**
+3. Choose `claude/cro-tools-lead-generation-Nkn7N` branch and `/ (root)`
+4. Click **Save**
+5. Your site will be live at `https://[username].github.io/effective-tribble/`
+
 ## Customization
 
-- Update branding in `public/index.html`
-- Adjust scoring weights in `server.js`
-- Connect lead capture to your CRM in the `/api/leads` endpoint
+- Update branding (logo, colors) directly in `index.html`
+- Integrate lead capture with Formspree, ConvertKit, etc.
+- Add your own analytics tracking
 
 ## Tech Stack
 
-- Node.js + Express
-- Cheerio (HTML parsing)
-- Axios (HTTP requests)
-- Vanilla JS frontend
+- Pure HTML, CSS, JavaScript (no build step)
+- Uses [AllOrigins](https://allorigins.win/) CORS proxy for fetching external pages
